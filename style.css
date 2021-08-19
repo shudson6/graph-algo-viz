@@ -26,6 +26,18 @@
   background-color: black;
 }
 
+.square-open {
+  background-color: green;
+}
+
+.square-closed {
+  background-color: red;
+}
+
+.square-on-path {
+  background-color: blue;
+}
+
 #app-wrapper {
   display: block;
   width: 70vmin;

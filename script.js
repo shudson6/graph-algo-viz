@@ -6,6 +6,9 @@ const endPointButton = document.getElementById("pickEnd-button");
 const wallButton = document.getElementById("wall-button");
 const resetButton = document.getElementById("reset-button");
 
+const runButton = document.getElementById("run-button");
+const stepButton = document.getElementById("step-button");
+
 const defaultStartPoint = "24,2";
 const defaultEndPoint = "2,20";
 
@@ -18,6 +21,19 @@ setStartPoint(defaultStartPoint);
 setEndPoint(defaultEndPoint);
 
 document.getElementById("setup-buttons").addEventListener("click", setupButtonsListener);
+runButton.addEventListener("click", runButtonListener);
+stepButton.addEventListener("click", stepButtonListener);
+
+/**
+ * class used when passing vertex information to search algorithm
+ * @param coord should be the id of the associated square
+ */
+class Vertex {
+  constructor(coord, ...neighbors) {
+    this.id = coord;
+    this.neighbors = neighbors.filter( Boolean );
+  }
+}
 
 ////////////////////////////////////////
 // functions
@@ -87,14 +103,7 @@ function clickedNewWallPoint(event) {
 }
 
 function resetGrid() {
-  const grid = document.getElementById("grid");
-  grid.childNodes.forEach((el) => {
-    if (el.classList.contains("square")) {
-      el.className = "square";
-    }
-  });
-  setStartPoint( defaultStartPoint );
-  setEndPoint( defaultEndPoint );
+  window.location = window.location;
 }
 
 function setupButtonsListener(event) {
@@ -135,4 +144,81 @@ function setupButtonsListener(event) {
   if (event.target === wallButton) {
     grid.addEventListener("click", clickedNewWallPoint);
   }
+}
+
+function runButtonListener() {
+  if ( !BFS.ready()) {
+    BFS.init(createVertexMap(), startPoint,endPoint);
+  }
+  BFS.run(openVertex, closeVertex, tracePath);
+}
+
+function stepButtonListener() {
+  if ( !BFS.ready()) {
+    BFS.init(createVertexMap(), startPoint,endPoint);
+  }
+  BFS.step(openVertex, closeVertex, tracePath);
+}
+
+function createVertexMap() {
+  const grid = document.getElementById("grid");
+  const vertexes = new Map();
+  
+  function idOrNull(row, col) {
+    const id = coordToId(row, col);
+    const node = document.getElementById( id );
+    if (node === null || node.classList.contains("square-wall")) {
+      return null;
+    }
+    return id;
+  }
+
+  grid.childNodes.forEach(node => {
+    if ( !node.classList.contains("square")
+        || node.classList.contains("square-wall")
+    ) {
+      return;
+    }
+    const [row, col] = idToCoord( node.id );
+    const north = idOrNull(row - 1, col);
+    const south = idOrNull(row + 1, col);
+    const east = idOrNull(row, col - 1);
+    const west = idOrNull(row, col + 1);
+    vertexes.set(node.id, new Vertex(node.id, north, south, east, west));
+  });
+
+  return vertexes;
+}
+
+function openVertex(id) {
+  if (id === startPoint || id === endPoint) {
+    return;
+  }
+  const node = document.getElementById( id );
+  node.classList.add("square-open");
+}
+
+function closeVertex(id) {
+  if (id === startPoint || id === endPoint) {
+    return;
+  }
+  const node = document.getElementById( id );
+  node.classList.remove("square-open");
+  node.classList.add("square-closed");
+}
+
+function tracePath(vertex) {
+  while ( vertex ) {
+    if (vertex.id !== startPoint && vertex.id !== endPoint) {
+      const node = document.getElementById( vertex.id );
+      node.classList.add("square-on-path");
+    }
+    vertex = vertex.previous;
+  }
+}
+
+// for debugging
+function logVertex(vertex) {
+  console.log(`Vertex: ${vertex.id} neighbors: ${vertex.neighbors} `
+      + `previous: ${vertex.previous ? vertex.previous.id : "null"}`);
 }

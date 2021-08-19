@@ -12,10 +12,9 @@ const BFS = (() => {
     vertexes = vertexMap;
     startPointId = startId;
     endPointId = endId;
-    for (let [k, v] of vertexes) {
-      console.log(`${k}: ${v.neighbors}`);
+    vertexes.forEach(v => {
       v.visited = false;
-    }
+    });
     const startVertex = vertexes.get( startPointId );
     startVertex.previous = null;
     startVertex.visited = true;
@@ -28,7 +27,7 @@ const BFS = (() => {
       setTimeout(() => {
         step(vertexOpened, vertexClosed, pathFound);
         run(vertexOpened, vertexClosed, pathFound);
-      }, 20);
+      }, 10);
     }
   }
 

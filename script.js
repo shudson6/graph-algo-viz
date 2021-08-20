@@ -196,7 +196,7 @@ function setupButtonsListener(event) {
     grid.addEventListener("mousedown", startDrawing);
   }
   if (event.target === roadButton) {
-    impediment = "square-asphalt";
+    impediment = "square-water";
     grid.addEventListener("mousedown", startDrawing);
   }
 }
@@ -238,10 +238,32 @@ function createVertexMap() {
     const south = idOrNull(row + 1, col);
     const east = idOrNull(row, col - 1);
     const west = idOrNull(row, col + 1);
-    vertexes.set(node.id, new Vertex(node.id, north, south, east, west));
+    
+    const vert = new Vertex(node.id, north, south, east, west);
+    vert.cost = costOf( node );
+    vertexes.set(node.id, vert);
   });
 
   return vertexes;
+}
+
+function costOf(square) {
+  if (square.classList.contains("square-dirt")) {
+    return 3;
+  }
+  if (square.classList.contains("square-water")) {
+    return 7;
+  }
+  if (square.classList.contains("square-wall")) {
+    return Infinity;
+  }
+  if ( square.classList.contains("square-end")
+    || square.classList.contains("square-start")
+  ) {
+    return 0;
+  }
+  // default is just asphalt
+  return 1;
 }
 
 function openVertex(id) {
@@ -281,15 +303,4 @@ function setSelectedAlgo(algo) {
   document.getElementById("algo-picker-button")
     .innerText = `Algo: ${ algo.displayName }`;
   algorithm = algo;
-  if (algorithm !== BFS) {
-    colorAllSquares("square-asphalt");
-  }
-}
-
-function colorAllSquares(type) {
-  for (const square of grid.childNodes) {
-    if (isValidDrawTarget( square )) {
-      square.classList.add( type );
-    }
-  }
 }

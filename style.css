@@ -1,5 +1,5 @@
 .square {
-  background-color: white;
+  background-color: darkgray;
   border: 0.1px solid black;
   transition: all 0.5s;
 }
@@ -28,11 +28,11 @@
 }
 
 .square-dirt {
-  background-color: brown;
+  background-color: tan;
 }
 
-.square-asphalt {
-  background-color: darkgray;
+.square-water {
+  background-color: aquamarine;
 }
 
 .square-open {

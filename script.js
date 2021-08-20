@@ -114,13 +114,36 @@ function clickedNewEndPoint(event) {
   }
 }
 
-function clickedNewWallPoint(event) {
-  if (event.target.classList.contains("square")
-    && !event.target.classList.contains("square-end")
-    && !event.target.classList.contains("square-start")
-  ) {
+function isValidDrawTarget(target) {
+  return target.classList.contains("square")
+      && !target.classList.contains("square-end")
+      && !target.classList.contains("square-start")
+}
+
+function startDrawing(event) {
+  if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
+    const grid = document.getElementById("grid");
+    grid.addEventListener("mousemove", drawWall);
+    grid.addEventListener("mouseup", endDrawing);
+    grid.addEventListener("mouseleave", endDrawing);
+
+    drawWall( event );
+  }
+}
+
+function drawWall(event) {
+  if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
     event.target.classList.add("square-wall");
   }
+}
+
+function endDrawing(event) {
+  const grid = document.getElementById("grid");
+  grid.removeEventListener("mousemove", drawWall);
+  grid.removeEventListener("mouseup", endDrawing);
+  grid.removeEventListener("mouseleave", endDrawing);
+
+  drawWall( event );
 }
 
 function resetGrid() {
@@ -144,7 +167,7 @@ function setupButtonsListener(event) {
   if (event.target !== wallButton) {
     wallButton.classList.remove("button-selected");
     wallButton.classList.add("button-unselected");
-    grid.removeEventListener("click", clickedNewWallPoint);
+    grid.removeEventListener("mousedown", startDrawing);
   }
 
   // action for clear button returns b/c it never needs to look selected
@@ -163,7 +186,7 @@ function setupButtonsListener(event) {
     grid.addEventListener("click", clickedNewEndPoint);
   }
   if (event.target === wallButton) {
-    grid.addEventListener("click", clickedNewWallPoint);
+    grid.addEventListener("mousedown", startDrawing);
   }
 }
 

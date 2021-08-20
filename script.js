@@ -1,5 +1,5 @@
-const gridWidth = 23;
-const gridHeight = 27;
+const gridWidth = 29;
+const gridHeight = 29;
 
 const startPointButton = document.getElementById("pickStart-button");
 const endPointButton = document.getElementById("pickEnd-button");
@@ -12,8 +12,22 @@ const stepButton = document.getElementById("step-button");
 const defaultStartPoint = "24,2";
 const defaultEndPoint = "2,20";
 
+const defaultAlgo = BFS;
+
 let startPoint;
 let endPoint;
+
+let algorithm;
+
+setSelectedAlgo( defaultAlgo );
+// insert algorithm choices
+const algoOptions = document.getElementById("algo-options");
+algoOptions.insertAdjacentHTML("beforeend", 
+    `<div id="algo-bfs" class="button button-unselected">BFS</div>`);
+document.getElementById("algo-bfs")
+    .addEventListener("click", () => {
+      setSelectedAlgo(BFS);
+    });
 
 initializeGrid(gridWidth, gridHeight);
 
@@ -147,17 +161,17 @@ function setupButtonsListener(event) {
 }
 
 function runButtonListener() {
-  if ( !BFS.ready()) {
-    BFS.init(createVertexMap(), startPoint,endPoint);
+  if ( !algorithm.ready()) {
+    algorithm.init(createVertexMap(), startPoint,endPoint);
   }
-  BFS.run(openVertex, closeVertex, tracePath);
+  algorithm.run(openVertex, closeVertex, tracePath);
 }
 
 function stepButtonListener() {
-  if ( !BFS.ready()) {
-    BFS.init(createVertexMap(), startPoint,endPoint);
+  if ( !algorithm.ready()) {
+    algorithm.init(createVertexMap(), startPoint,endPoint);
   }
-  BFS.step(openVertex, closeVertex, tracePath);
+  algorithm.step(openVertex, closeVertex, tracePath);
 }
 
 function createVertexMap() {
@@ -221,4 +235,10 @@ function tracePath(vertex) {
 function logVertex(vertex) {
   console.log(`Vertex: ${vertex.id} neighbors: ${vertex.neighbors} `
       + `previous: ${vertex.previous ? vertex.previous.id : "null"}`);
+}
+
+function setSelectedAlgo(algo) {
+  document.getElementById("algo-picker-button")
+    .innerText = `Algo: ${ algo.displayName }`;
+  algorithm = algo;
 }

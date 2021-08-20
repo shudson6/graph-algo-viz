@@ -49,7 +49,7 @@
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat( 23, 1fr );
+  grid-template-columns: repeat( 29, 1fr );
   grid-template-rows: repeat( auto, 1fr );
 }
 
@@ -59,7 +59,7 @@
 
 #run-buttons {
   display: grid;
-  grid-template-columns: repeat( 2, 50% );
+  grid-template-columns: repeat( 3, 33.3% );
 }
 
 #setup-buttons {
@@ -87,3 +87,31 @@
   color: white;
   background-color: gray;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: lightgray;
+  z-index: 1;
+  min-width: 90%;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content div {
+  color: black;
+  display: block;
+  width: inherit;
+}
+
+.dropdown-content div:hover {
+  background-color: gray;
+}
+

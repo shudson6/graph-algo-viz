@@ -1,4 +1,5 @@
 const BFS = (() => {
+  const displayName = "BFS";
   let startPointId, endPointId;
   let vertexes;
   const queue = [];
@@ -56,5 +57,6 @@ const BFS = (() => {
     ,run
     ,step
     ,ready
+    ,displayName
   };
 })();

@@ -27,6 +27,14 @@
   background-color: black;
 }
 
+.square-dirt {
+  background-color: brown;
+}
+
+.square-asphalt {
+  background-color: darkgray;
+}
+
 .square-open {
   background-color: greenyellow;
 }
@@ -65,7 +73,7 @@
 
 #setup-buttons {
   display: grid;
-  grid-template-columns: repeat( 4, 25% );
+  grid-template-columns: repeat( 6, 16.67% );
 }
 
 .button {

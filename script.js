@@ -1,9 +1,13 @@
 const gridWidth = 31;
 const gridHeight = 31;
 
+const grid = document.getElementById("grid");
+
 const startPointButton = document.getElementById("pickStart-button");
 const endPointButton = document.getElementById("pickEnd-button");
 const wallButton = document.getElementById("wall-button");
+const dirtButton = document.getElementById("drawDirt-button");
+const roadButton = document.getElementById("drawRoad-button");
 const resetButton = document.getElementById("reset-button");
 
 const runButton = document.getElementById("run-button");
@@ -18,6 +22,8 @@ let startPoint;
 let endPoint;
 
 let algorithm;
+
+let impediment;
 
 setSelectedAlgo( defaultAlgo );
 // insert algorithm choices
@@ -69,7 +75,6 @@ function idToCoord(id) {
 }
 
 function initializeGrid(width, height) {
-  const grid = document.getElementById("grid");
   for (let row = 0; row < height; row++) {
     for (let col = 0; col < width; col++) {
       const square = `<div class="square" id="${ coordToId( row, col )}"></div>`;
@@ -85,7 +90,9 @@ function setStartPoint(coord) {
     document.getElementById(startPoint).classList.remove("square-start");
   }
   startPoint = coord;
-  document.getElementById(startPoint).classList.add("square-start");
+  const node = document.getElementById(startPoint);
+  node.className = "square";
+  node.classList.add("square-start");
 }
 
 function setEndPoint(coord) {
@@ -93,23 +100,19 @@ function setEndPoint(coord) {
     document.getElementById(endPoint).classList.remove("square-end");
   }
   endPoint = coord;
-  document.getElementById(endPoint).classList.add("square-end");
+  const node = document.getElementById(endPoint);
+  node.className = "square";
+  node.classList.add("square-end");
 }
 
 function clickedNewStartPoint(event) {
-  if (event.target.classList.contains("square")
-    && !event.target.classList.contains("square-end")
-    && !event.target.classList.contains("square-start")
-  ) {
+  if (isValidDrawTarget(event.target)) {
     setStartPoint(event.target.id);
   }
 }
 
 function clickedNewEndPoint(event) {
-  if (event.target.classList.contains("square")
-    && !event.target.classList.contains("square-end")
-    && !event.target.classList.contains("square-start")
-  ) {
+  if (isValidDrawTarget(event.target)) {
     setEndPoint(event.target.id);
   }
 }
@@ -122,7 +125,6 @@ function isValidDrawTarget(target) {
 
 function startDrawing(event) {
   if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
-    const grid = document.getElementById("grid");
     grid.addEventListener("mousemove", drawWall);
     grid.addEventListener("mouseup", endDrawing);
     grid.addEventListener("mouseleave", endDrawing);
@@ -133,12 +135,12 @@ function startDrawing(event) {
 
 function drawWall(event) {
   if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
-    event.target.classList.add("square-wall");
+    event.target.className = "square";
+    event.target.classList.add( impediment );
   }
 }
 
 function endDrawing(event) {
-  const grid = document.getElementById("grid");
   grid.removeEventListener("mousemove", drawWall);
   grid.removeEventListener("mouseup", endDrawing);
   grid.removeEventListener("mouseleave", endDrawing);
@@ -151,8 +153,6 @@ function resetGrid() {
 }
 
 function setupButtonsListener(event) {
-  const grid = document.getElementById("grid");
-
   // clear buttons that weren't clicked
   if (event.target !== startPointButton) {
     startPointButton.classList.remove("button-selected");
@@ -164,10 +164,12 @@ function setupButtonsListener(event) {
     endPointButton.classList.add("button-unselected");
     grid.removeEventListener("click", clickedNewEndPoint);
   }
-  if (event.target !== wallButton) {
-    wallButton.classList.remove("button-selected");
-    wallButton.classList.add("button-unselected");
-    grid.removeEventListener("mousedown", startDrawing);
+  for (const button of [ wallButton, dirtButton, roadButton ]) {
+    if (event.target !== button) {
+      button.classList.remove("button-selected");
+      button.classList.add("button-unselected");
+      grid.removeEventListener("mousedown", startDrawing);
+    }
   }
 
   // action for clear button returns b/c it never needs to look selected
@@ -186,6 +188,15 @@ function setupButtonsListener(event) {
     grid.addEventListener("click", clickedNewEndPoint);
   }
   if (event.target === wallButton) {
+    impediment = "square-wall";
+    grid.addEventListener("mousedown", startDrawing);
+  }
+  if (event.target === dirtButton) {
+    impediment = "square-dirt";
+    grid.addEventListener("mousedown", startDrawing);
+  }
+  if (event.target === roadButton) {
+    impediment = "square-asphalt";
     grid.addEventListener("mousedown", startDrawing);
   }
 }
@@ -205,7 +216,6 @@ function stepButtonListener() {
 }
 
 function createVertexMap() {
-  const grid = document.getElementById("grid");
   const vertexes = new Map();
   
   function idOrNull(row, col) {
@@ -271,4 +281,15 @@ function setSelectedAlgo(algo) {
   document.getElementById("algo-picker-button")
     .innerText = `Algo: ${ algo.displayName }`;
   algorithm = algo;
+  if (algorithm !== BFS) {
+    colorAllSquares("square-asphalt");
+  }
+}
+
+function colorAllSquares(type) {
+  for (const square of grid.childNodes) {
+    if (isValidDrawTarget( square )) {
+      square.classList.add( type );
+    }
+  }
 }

@@ -28,7 +28,7 @@ const BFS = (() => {
       setTimeout(() => {
         step(vertexOpened, vertexClosed, pathFound);
         run(vertexOpened, vertexClosed, pathFound);
-      }, 10);
+      }, 20);
     }
   }
 

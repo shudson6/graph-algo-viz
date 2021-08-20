@@ -1,5 +1,5 @@
-const gridWidth = 29;
-const gridHeight = 29;
+const gridWidth = 31;
+const gridHeight = 31;
 
 const startPointButton = document.getElementById("pickStart-button");
 const endPointButton = document.getElementById("pickEnd-button");
@@ -21,13 +21,20 @@ let algorithm;
 
 setSelectedAlgo( defaultAlgo );
 // insert algorithm choices
-const algoOptions = document.getElementById("algo-options");
-algoOptions.insertAdjacentHTML("beforeend", 
-    `<div id="algo-bfs" class="button button-unselected">BFS</div>`);
-document.getElementById("algo-bfs")
-    .addEventListener("click", () => {
-      setSelectedAlgo(BFS);
-    });
+addAlgoOption( BFS );
+addAlgoOption( Dijkstra );
+
+function addAlgoOption(algo) {
+  const algoOptions = document.getElementById("algo-options");
+  const id = `algo-${ algo.displayName.toLowerCase() }`;
+  algoOptions.insertAdjacentHTML("beforeend", 
+      `<div id="${ id }" class="button button-unselected">`
+      + `${ algo.displayName }</div>`);
+  document.getElementById( id )
+      .addEventListener("click", () => {
+        setSelectedAlgo( algo );
+      });
+}
 
 initializeGrid(gridWidth, gridHeight);
 

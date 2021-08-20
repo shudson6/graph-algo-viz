@@ -1,7 +1,7 @@
 .square {
   background-color: white;
   border: 0.1px solid black;
-  transition: all 0.3s;
+  transition: all 0.5s;
 }
 
 .square:after {
@@ -15,11 +15,12 @@
 }
 
 .square-start {
-  background-color: aqua;
+  background-color: green;
 }
 
 .square-end {
-  background-color: navy;
+  background-image: url(checkered.png);
+  background-size: cover;
 }
 
 .square-wall {
@@ -27,7 +28,7 @@
 }
 
 .square-open {
-  background-color: green;
+  background-color: greenyellow;
 }
 
 .square-closed {
@@ -49,7 +50,7 @@
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat( 29, 1fr );
+  grid-template-columns: repeat( 31, 1fr );
   grid-template-rows: repeat( auto, 1fr );
 }
 

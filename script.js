@@ -17,6 +17,9 @@ const resetButton = document.getElementById("reset-button");
 
 const algoButtons = [ bfsButton, dijkstraButton, astarButton ];
 selectButton( bfsButton );
+for (const button of algoButtons) {
+  button.addEventListener("click", selectAlgorithm);
+}
 const drawButtons = [ startPointButton
                       ,endPointButton
                       ,roadButton
@@ -224,6 +227,13 @@ function runButtonListener() {
   algorithm.run(openVertex, closeVertex, tracePath);
   resetButton.removeEventListener("click", resetGrid);
   resetButton.addEventListener("click", resetPlayField);
+}
+
+function selectAlgorithm(event) {
+  for (button of algoButtons.filter(b => b != event.target)) {
+    deselectButton( button );
+  }
+  selectButton( event.target );
 }
 
 function createVertexMap() {

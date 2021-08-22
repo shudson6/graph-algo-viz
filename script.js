@@ -279,13 +279,13 @@ function tracePath(vertex) {
 
 function getSelectedAlgorithm() {
   if (bfsButton.classList.contains("button-selected")) {
-    return new BFS(createVertexMap, startPoint, endPoint);
+    return new BFS(createVertexMap(), startPoint, endPoint);
   }
   if (dijkstraButton.classList.contains("button-selected")) {
-    return new Dijkstra(createVertexMap, startPoint, endPoint);
+    return new Dijkstra(createVertexMap(), startPoint, endPoint);
   }
   if (astarButton.classList.contains("button-selected")) {
-    return new Astar(createVertexMap, startPoint, endPoint);
+    return new Astar(createVertexMap(), startPoint, endPoint);
   }
 }
 

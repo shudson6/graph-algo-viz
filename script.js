@@ -42,6 +42,7 @@ setStartPoint(defaultStartPoint);
 setEndPoint(defaultEndPoint);
 
 runButton.addEventListener("click", runButtonListener);
+resetButton.addEventListener("click", resetGrid);
 
 /**
  * class used when passing vertex information to search algorithm
@@ -150,6 +151,26 @@ function endDrawing(event) {
   drawWall( event );
 }
 
+/**
+ * Gets rid of open, closed, onPath indications, returning the
+ * grid to its state from before running any algo.
+ * Also changes reset button event listener to resetGrid()
+ */
+function resetPlayField() {
+  for (const node of grid.childNodes) {
+    if (node.classList.contains("square")) {
+      node.classList.remove("square-open");
+      node.classList.remove("square-closed");
+      node.classList.remove("square-on-path");
+    }
+  }
+  resetButton.removeEventListener("click", resetPlayField);
+  resetButton.addEventListener("click", resetGrid);
+}
+
+/**
+ * Resets grid, really by refreshing entire page.
+ */
 function resetGrid() {
   window.location = window.location;
 }
@@ -194,9 +215,15 @@ function drawingButtonsListener(event) {
   }
 }
 
+/**
+ * Launches the selected algo then changes the reset button to clear
+ * only the algo's changes.
+ */
 function runButtonListener() {
   const algorithm = getSelectedAlgorithm();
   algorithm.run(openVertex, closeVertex, tracePath);
+  resetButton.removeEventListener("click", resetGrid);
+  resetButton.addEventListener("click", resetPlayField);
 }
 
 function createVertexMap() {

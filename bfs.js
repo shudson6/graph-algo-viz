@@ -23,15 +23,13 @@ class BFS {
   }
 
   step(vertexOpened, vertexClosed, pathFound) {
-    const current = this.queue.shift();
+    const current = this.nextVertex();
     vertexClosed( current.id );
     for (const neighborId of current.neighbors) {
       const nvx = this.vertexMap.get( neighborId );
-      if ( !nvx.visited ) {
+      if ( this.needToVisit( nvx, current )) {
         vertexOpened( nvx.id );
-        nvx.visited = true;
-        nvx.previous = current;
-        this.queue.push( nvx );
+        this.visit(nvx, current);
       }
       if (neighborId === this.endId) {
         console.log("Success!");
@@ -40,5 +38,19 @@ class BFS {
         return;
       }
     }
+  }
+
+  nextVertex() {
+    return this.queue.shift();
+  }
+
+  needToVisit(neighbor, current) {
+    return !neighbor.visited;
+  }
+
+  visit(neighbor, current) {
+      neighbor.visited = true;
+      neighbor.previous = current;
+      this.queue.push( neighbor );
   }
 }

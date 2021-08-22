@@ -1,66 +1,25 @@
-const Dijkstra = (() => {
-  const displayName = "Dijkstra";
-  let startPointId, endPointId;
-  let vertexes;
-  const queue = [];
-  let initialized = false;
-
-  function ready() {
-    return initialized;
+class Dijkstra extends BFS {
+  constructor(vertexMap, startId, endId) {
+    super(vertexMap, startId, endId);
+    this.queue[0].pathCost = 0;
   }
 
-  function init(vertexMap, startId, endId) {
-    vertexes = vertexMap;
-    startPointId = startId;
-    endPointId = endId;
-    vertexes.forEach(v => {
-      v.visited = false;
-    });
-    const startVertex = vertexes.get( startPointId );
-    startVertex.previous = null;
-    startVertex.visited = true;
-    startVertex.pathCost = 0;
-    queue.push( startVertex );
-    initialized = true;
+  nextVertex() {
+    return this.queue.pop();
   }
 
-  function run(vertexOpened, vertexClosed, pathFound) {
-    if (queue.length > 0) {
-      setTimeout(() => {
-        step(vertexOpened, vertexClosed, pathFound);
-        run(vertexOpened, vertexClosed, pathFound);
-      }, 20);
-    }
+  needToVisit(neighbor, current) {
+    return !neighbor.visited
+        || (this.pathCost(neighbor, current) < neighbor.pathCost);
   }
 
-  function step(vertexOpened, vertexClosed, pathFound) {
-    const current = queue.pop();
-    vertexClosed( current.id );
-    for (const neighborId of current.neighbors) {
-      const nvx = vertexes.get( neighborId );
-      pcost = current.pathCost + nvx.cost;
-      if ( !nvx.visited || pcost < nvx.pathCost) {
-        vertexOpened( nvx.id );
-        nvx.visited = true;
-        nvx.previous = current;
-        nvx.pathCost = pcost;
-        queue.push( nvx );
-        queue.sort((a, b) => b.pathCost - a.pathCost);
-      }
-      if (neighborId === endPoint) {
-        console.log("Success!");
-        pathFound( nvx );
-        queue.length = 0;
-        return;
-      }
-    }
+  visit(neighbor, current) {
+    super.visit(neighbor, current);
+    neighbor.pathCost = this.pathCost(neighbor, current);
+    this.queue.sort((a, b) => b.pathCost - a.pathCost);
   }
 
-  return {
-    displayName
-    ,ready
-    ,init
-    ,run
-    ,step
+  pathCost(neighbor, current) {
+    return current.pathCost + neighbor.cost;
   }
-})();
+}

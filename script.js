@@ -3,53 +3,44 @@ const gridHeight = 31;
 
 const grid = document.getElementById("grid");
 
+const bfsButton = document.getElementById("algo-bfs");
+const dijkstraButton = document.getElementById("algo-dijkstra");
+const astarButton = document.getElementById("algo-a-star");
 const startPointButton = document.getElementById("pickStart-button");
 const endPointButton = document.getElementById("pickEnd-button");
 const wallButton = document.getElementById("wall-button");
-const dirtButton = document.getElementById("drawDirt-button");
 const roadButton = document.getElementById("drawRoad-button");
+const dirtButton = document.getElementById("drawDirt-button");
+const waterButton = document.getElementById("drawWater-button");
+const runButton = document.getElementById("run-button");
 const resetButton = document.getElementById("reset-button");
 
-const runButton = document.getElementById("run-button");
-const stepButton = document.getElementById("step-button");
+const algoButtons = [ bfsButton, dijkstraButton, astarButton ];
+const drawButtons = [ startPointButton
+                      ,endPointButton
+                      ,roadButton
+                      ,dirtButton
+                      ,waterButton
+                      ,wallButton
+                    ];
+for (const button of drawButtons) {
+  button.addEventListener("click", drawingButtonsListener);
+}
 
 const defaultStartPoint = "24,2";
 const defaultEndPoint = "2,20";
 
-const defaultAlgo = BFS;
-
 let startPoint;
 let endPoint;
 
-let algorithm;
-
 let impediment;
-
-setSelectedAlgo( defaultAlgo );
-// insert algorithm choices
-addAlgoOption( BFS );
-addAlgoOption( Dijkstra );
-
-function addAlgoOption(algo) {
-  const algoOptions = document.getElementById("algo-options");
-  const id = `algo-${ algo.displayName.toLowerCase() }`;
-  algoOptions.insertAdjacentHTML("beforeend", 
-      `<div id="${ id }" class="button button-unselected">`
-      + `${ algo.displayName }</div>`);
-  document.getElementById( id )
-      .addEventListener("click", () => {
-        setSelectedAlgo( algo );
-      });
-}
 
 initializeGrid(gridWidth, gridHeight);
 
 setStartPoint(defaultStartPoint);
 setEndPoint(defaultEndPoint);
 
-document.getElementById("setup-buttons").addEventListener("click", setupButtonsListener);
 runButton.addEventListener("click", runButtonListener);
-stepButton.addEventListener("click", stepButtonListener);
 
 /**
  * class used when passing vertex information to search algorithm
@@ -105,6 +96,16 @@ function setEndPoint(coord) {
   node.classList.add("square-end");
 }
 
+function selectButton(button) {
+  button.classList.remove("button-unselected");
+  button.classList.add("button-selected");
+}
+
+function deselectButton(button) {
+  button.classList.remove("button-selected");
+  button.classList.add("button-unselected");
+}
+
 function clickedNewStartPoint(event) {
   if (isValidDrawTarget(event.target)) {
     setStartPoint(event.target.id);
@@ -152,34 +153,21 @@ function resetGrid() {
   window.location = window.location;
 }
 
-function setupButtonsListener(event) {
-  // clear buttons that weren't clicked
-  if (event.target !== startPointButton) {
-    startPointButton.classList.remove("button-selected");
-    startPointButton.classList.add("button-unselected");
-    grid.removeEventListener("click", clickedNewStartPoint);
-  }
-  if (event.target !== endPointButton) {
-    endPointButton.classList.remove("button-selected");
-    endPointButton.classList.add("button-unselected");
-    grid.removeEventListener("click", clickedNewEndPoint);
-  }
-  for (const button of [ wallButton, dirtButton, roadButton ]) {
-    if (event.target !== button) {
-      button.classList.remove("button-selected");
-      button.classList.add("button-unselected");
+function drawingButtonsListener(event) {
+  for (const btn of drawButtons.filter(b => b !== event.target)) {
+    deselectButton( btn );
+    if (btn !== startPointButton) {
+      grid.removeEventListener("click", clickedNewStartPoint);
+    }
+    else if (btn !== endPointButton) {
+      grid.removeEventListener("click", clickedNewEndPoint);
+    }
+    else {
       grid.removeEventListener("mousedown", startDrawing);
     }
   }
 
-  // action for clear button returns b/c it never needs to look selected
-  if (event.target === resetButton) {
-    resetGrid();
-    return;
-  }
-
-  event.target.classList.remove("button-unselected");
-  event.target.classList.add("button-selected");
+  selectButton( event.target );
 
   if (event.target === startPointButton) {
     grid.addEventListener("click", clickedNewStartPoint);
@@ -195,8 +183,12 @@ function setupButtonsListener(event) {
     impediment = "square-dirt";
     grid.addEventListener("mousedown", startDrawing);
   }
-  if (event.target === roadButton) {
+  if (event.target === waterButton) {
     impediment = "square-water";
+    grid.addEventListener("mousedown", startDrawing);
+  }
+  if (event.target === roadButton) {
+    impediment = "square";
     grid.addEventListener("mousedown", startDrawing);
   }
 }
@@ -206,13 +198,6 @@ function runButtonListener() {
     algorithm.init(createVertexMap(), startPoint,endPoint);
   }
   algorithm.run(openVertex, closeVertex, tracePath);
-}
-
-function stepButtonListener() {
-  if ( !algorithm.ready()) {
-    algorithm.init(createVertexMap(), startPoint,endPoint);
-  }
-  algorithm.step(openVertex, closeVertex, tracePath);
 }
 
 function createVertexMap() {
@@ -297,10 +282,4 @@ function tracePath(vertex) {
 function logVertex(vertex) {
   console.log(`Vertex: ${vertex.id} neighbors: ${vertex.neighbors} `
       + `previous: ${vertex.previous ? vertex.previous.id : "null"}`);
-}
-
-function setSelectedAlgo(algo) {
-  document.getElementById("algo-picker-button")
-    .innerText = `Algo: ${ algo.displayName }`;
-  algorithm = algo;
 }

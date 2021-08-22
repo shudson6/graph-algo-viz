@@ -17,6 +17,9 @@ class Astar extends Dijkstra {
     neighbor.totalCost = neighbor.pathCost + this.manhattanCost(neighbor);
   }
 
+  /**
+   * used as heuristic for estimating total path cost
+   */
   manhattanCost(vertex) {
     const [endX, endY] = idToCoord(this.endId);
     const [curX, curY] = idToCoord(vertex.id);

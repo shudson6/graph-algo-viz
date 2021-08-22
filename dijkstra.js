@@ -1,3 +1,8 @@
+/**
+ * Implements Dijkstra's Algorithm. Its 'priority queue' is just an array
+ * that is constantly sorted descending and accessed from the rear. Not 
+ * exactly efficient, but it works and keeps me from writing a PQ :)
+ */
 class Dijkstra extends BFS {
   constructor(vertexMap, startId, endId) {
     super(vertexMap, startId, endId);
@@ -5,6 +10,7 @@ class Dijkstra extends BFS {
   }
 
   nextVertex() {
+    this.queue.sort((a, b) => b.pathCost - a.pathCost);
     return this.queue.pop();
   }
 
@@ -16,7 +22,6 @@ class Dijkstra extends BFS {
   visit(neighbor, current) {
     super.visit(neighbor, current);
     neighbor.pathCost = this.pathCost(neighbor, current);
-    this.queue.sort((a, b) => b.pathCost - a.pathCost);
   }
 
   pathCost(neighbor, current) {

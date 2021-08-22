@@ -47,6 +47,14 @@
   background-color: blue;
 }
 
+.divicon {
+  border: 0.1px solid black;
+  display: inline-block;
+  vertical-align: middle;
+  min-height: 1em;
+  min-width: 1em;
+}
+
 #app-wrapper {
   display: block;
   width: 70vmin;
@@ -68,12 +76,12 @@
 
 #run-buttons {
   display: grid;
-  grid-template-columns: repeat( 3, 33.3% );
+  grid-template-columns: repeat( 4, 25% );
 }
 
 #setup-buttons {
   display: grid;
-  grid-template-columns: repeat( 6, 16.67% );
+  grid-template-columns: repeat( 7, auto );
 }
 
 .button {
@@ -96,31 +104,3 @@
   color: white;
   background-color: gray;
 }
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: lightgray;
-  z-index: 1;
-  min-width: 90%;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown-content div {
-  color: black;
-  display: block;
-  width: inherit;
-}
-
-.dropdown-content div:hover {
-  background-color: gray;
-}
-

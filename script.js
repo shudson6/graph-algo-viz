@@ -16,6 +16,7 @@ const runButton = document.getElementById("run-button");
 const resetButton = document.getElementById("reset-button");
 
 const algoButtons = [ bfsButton, dijkstraButton, astarButton ];
+selectButton( bfsButton );
 const drawButtons = [ startPointButton
                       ,endPointButton
                       ,roadButton
@@ -194,9 +195,7 @@ function drawingButtonsListener(event) {
 }
 
 function runButtonListener() {
-  if ( !algorithm.ready()) {
-    algorithm.init(createVertexMap(), startPoint,endPoint);
-  }
+  const algorithm = getSelectedAlgorithm();
   algorithm.run(openVertex, closeVertex, tracePath);
 }
 
@@ -275,6 +274,18 @@ function tracePath(vertex) {
       node.classList.add("square-on-path");
     }
     vertex = vertex.previous;
+  }
+}
+
+function getSelectedAlgorithm() {
+  if (bfsButton.classList.contains("button-selected")) {
+    return new BFS(createVertexMap, startPoint, endPoint);
+  }
+  if (dijkstraButton.classList.contains("button-selected")) {
+    return new Dijkstra(createVertexMap, startPoint, endPoint);
+  }
+  if (astarButton.classList.contains("button-selected")) {
+    return new Astar(createVertexMap, startPoint, endPoint);
   }
 }
 

@@ -17,9 +17,6 @@ const resetButton = document.getElementById("reset-button");
 
 const algoButtons = [ bfsButton, dijkstraButton, astarButton ];
 selectButton( bfsButton );
-for (const button of algoButtons) {
-  button.addEventListener("click", selectAlgorithm);
-}
 const drawButtons = [ startPointButton
                       ,endPointButton
                       ,roadButton
@@ -27,9 +24,6 @@ const drawButtons = [ startPointButton
                       ,waterButton
                       ,wallButton
                     ];
-for (const button of drawButtons) {
-  button.addEventListener("click", drawingButtonsListener);
-}
 
 const defaultStartPoint = "24,2";
 const defaultEndPoint = "2,20";
@@ -44,8 +38,7 @@ initializeGrid(gridWidth, gridHeight);
 setStartPoint(defaultStartPoint);
 setEndPoint(defaultEndPoint);
 
-runButton.addEventListener("click", runButtonListener);
-resetButton.addEventListener("click", resetGrid);
+enableControls();
 
 /**
  * class used when passing vertex information to search algorithm
@@ -131,15 +124,15 @@ function isValidDrawTarget(target) {
 
 function startDrawing(event) {
   if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
-    grid.addEventListener("mousemove", drawWall);
+    grid.addEventListener("mousemove", drawTerrain);
     grid.addEventListener("mouseup", endDrawing);
     grid.addEventListener("mouseleave", endDrawing);
 
-    drawWall( event );
+    drawTerrain( event );
   }
 }
 
-function drawWall(event) {
+function drawTerrain(event) {
   if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
     event.target.className = "square";
     event.target.classList.add( impediment );
@@ -147,19 +140,18 @@ function drawWall(event) {
 }
 
 function endDrawing(event) {
-  grid.removeEventListener("mousemove", drawWall);
+  grid.removeEventListener("mousemove", drawTerrain);
   grid.removeEventListener("mouseup", endDrawing);
   grid.removeEventListener("mouseleave", endDrawing);
 
-  drawWall( event );
+  drawTerrain( event );
 }
 
 /**
  * Gets rid of open, closed, onPath indications, returning the
  * grid to its state from before running any algo.
- * Also changes reset button event listener to resetGrid()
  */
-function resetPlayField() {
+function removePathingVisuals() {
   for (const node of grid.childNodes) {
     if (node.classList.contains("square")) {
       node.classList.remove("square-open");
@@ -167,31 +159,16 @@ function resetPlayField() {
       node.classList.remove("square-on-path");
     }
   }
-  resetButton.removeEventListener("click", resetPlayField);
-  resetButton.addEventListener("click", resetGrid);
-}
-
-/**
- * Resets grid, really by refreshing entire page.
- */
-function resetGrid() {
-  window.location = window.location;
 }
 
 function drawingButtonsListener(event) {
-  for (const btn of drawButtons.filter(b => b !== event.target)) {
-    deselectButton( btn );
-    if (btn !== startPointButton) {
-      grid.removeEventListener("click", clickedNewStartPoint);
-    }
-    else if (btn !== endPointButton) {
-      grid.removeEventListener("click", clickedNewEndPoint);
-    }
-    else {
-      grid.removeEventListener("mousedown", startDrawing);
-    }
-  }
+  grid.removeEventListener("click", clickedNewStartPoint);
+  grid.removeEventListener("click", clickedNewEndPoint);
+  grid.removeEventListener("mousedown", startDrawing);
 
+  for (button of drawButtons.filter(b => b !== event.target)) {
+    deselectButton( button );
+  }
   selectButton( event.target );
 
   if (event.target === startPointButton) {
@@ -223,13 +200,19 @@ function drawingButtonsListener(event) {
  * only the algo's changes.
  */
 function runButtonListener() {
+  disableControls();
   const algorithm = getSelectedAlgorithm();
-  algorithm.run(openVertex, closeVertex, tracePath);
-  resetButton.removeEventListener("click", resetGrid);
-  resetButton.addEventListener("click", resetPlayField);
+  // run is asynchronous because of using setTimeout()
+  // so, enabling controls must be done in the pathFound callback
+  algorithm.run(openVertex, closeVertex, 
+      (vertex) => {
+        tracePath(vertex);
+        enableControls();
+      });
 }
 
 function selectAlgorithm(event) {
+  removePathingVisuals();
   for (button of algoButtons.filter(b => b != event.target)) {
     deselectButton( button );
   }
@@ -324,6 +307,31 @@ function getSelectedAlgorithm() {
   if (astarButton.classList.contains("button-selected")) {
     return new Astar(createVertexMap(), startPoint, endPoint);
   }
+}
+
+function disableControls() {
+  // stuck manually removing all listeners that might be attached
+  for (const button of algoButtons) {
+    button.removeEventListener("click", selectAlgorithm);
+  }
+  for (const button of drawButtons) {
+    deselectButton( button );
+    button.removeEventListener("click", drawingButtonsListener);
+  }
+  runButton.removeEventListener("click", runButtonListener);
+  resetButton.removeEventListener("click", removePathingVisuals);
+  grid.removeEventListener("mousedown", startDrawing);
+}
+
+function enableControls() {
+  for (const button of algoButtons) {
+    button.addEventListener("click", selectAlgorithm);
+  }
+  for (const button of drawButtons) {
+    button.addEventListener("click", drawingButtonsListener);
+  }
+  runButton.addEventListener("click", runButtonListener);
+  resetButton.addEventListener("click", removePathingVisuals);
 }
 
 // for debugging

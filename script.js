@@ -187,30 +187,30 @@ function drawingButtonsListener(event) {
   grid.removeEventListener("click", clickedNewEndPoint);
   grid.removeEventListener("mousedown", startDrawing);
 
-  for (button of drawButtons.filter(b => b !== event.target)) {
+  for (button of drawButtons.filter(b => b !== event.currentTarget)) {
     deselectButton( button );
   }
-  selectButton( event.target );
+  selectButton( event.currentTarget );
 
-  if (event.target === startPointButton) {
+  if (event.currentTarget === startPointButton) {
     grid.addEventListener("click", clickedNewStartPoint);
   }
-  if (event.target === endPointButton) {
+  if (event.currentTarget === endPointButton) {
     grid.addEventListener("click", clickedNewEndPoint);
   }
-  if (event.target === wallButton) {
+  if (event.currentTarget === wallButton) {
     drawingType = "square-wall";
     grid.addEventListener("mousedown", startDrawing);
   }
-  if (event.target === dirtButton) {
+  if (event.currentTarget === dirtButton) {
     drawingType = "square-dirt";
     grid.addEventListener("mousedown", startDrawing);
   }
-  if (event.target === waterButton) {
+  if (event.currentTarget === waterButton) {
     drawingType = "square-water";
     grid.addEventListener("mousedown", startDrawing);
   }
-  if (event.target === roadButton) {
+  if (event.currentTarget === roadButton) {
     drawingType = "square";
     grid.addEventListener("mousedown", startDrawing);
   }

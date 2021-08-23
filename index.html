@@ -7,41 +7,55 @@
   <body>
     <div id="app-wrapper">
       <div id="controls-wrapper">
-        <div id="run-buttons">
-          <div id="algo-bfs" class="button button-unselected">BFS</div>
-          <div id="algo-dijkstra" class="button button-unselected">Dijkstra</div>
-          <div id="algo-a-star" class="button button-unselected">A*</div>
+        <div id="top-buttons" class="button-row">
+          <div id="algo-buttons" class="button-group">
+            <div id="algo-bfs" class="button button-unselected">BFS</div>
+            <div id="algo-dijkstra" class="button button-unselected">Dijkstra</div>
+            <div id="algo-a-star" class="button button-unselected">A*</div>
+          </div>
           <div id="run-button" class="button button-unselected">Run</div>
         </div>
-        <div id="setup-buttons">
-          <div id="pickStart-button" class="button button-unselected">
-            Start
-            <div class="divicon square-start"></div>
-          </div>
-          <div id="pickEnd-button" class="button button-unselected">
-            End
-            <div class="divicon square-end"></div>
-          </div>
-          <div id="drawRoad-button" class="button button-unselected">
-            Road
-            <div class="divicon square"></div>
-          </div>
-          <div id="drawDirt-button" class="button button-unselected">
-            Dirt
-            <div class="divicon square-dirt"></div>
-          </div>
-          <div id="drawWater-button" class="button button-unselected">
-            Water
-            <div class="divicon square-water"></div>
-          </div>
-          <div id="wall-button" class="button button-unselected">
-            Wall
-            <div class="divicon square-wall"></div>
+        <div id="bottom-buttons" class="button-row">
+          <div id="draw-buttons" class="button-group">
+            <div id="pickStart-button" class="button button-unselected">
+              Start
+              <div class="divicon square-start"></div>
+            </div>
+            <div id="pickEnd-button" class="button button-unselected">
+              End
+              <div class="divicon square-end"></div>
+            </div>
+            <div id="drawRoad-button" class="button button-unselected">
+              Road
+              <div class="divicon square"></div>
+            </div>
+            <div id="drawDirt-button" class="button button-unselected">
+              Dirt
+              <div class="divicon square-dirt"></div>
+            </div>
+            <div id="drawWater-button" class="button button-unselected">
+              Water
+              <div class="divicon square-water"></div>
+            </div>
+            <div id="wall-button" class="button button-unselected">
+              Wall
+              <div class="divicon square-wall"></div>
+            </div>
           </div>
           <div id="reset-button" class="button button-unselected">Reset</div>
         </div>
       </div>
       <div id="grid"></div>
+      <div id="notes">
+        Each square has up, down, left, and right neighbors. No diagonals.
+        <br>
+        "Road" squares cost 1, "Dirt" 3, "Water" 7. The goal square is free.
+        Cost of traversing an edge is the cost of the destination square.
+        <br>
+        Breadth-First-Search ignores terrain cost, is only affected by walls.
+        <br>
+        A* uses Manhattan distance as its heuristic.
+      </div>
     </div>
     <script src="bfs.js"></script>
     <script src="dijkstra.js"></script>

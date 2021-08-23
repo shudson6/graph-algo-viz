@@ -51,8 +51,8 @@
   border: 0.1px solid black;
   display: inline-block;
   vertical-align: middle;
-  min-height: 1em;
-  min-width: 1em;
+  min-height: 0.8em;
+  min-width: 0.8em;
 }
 
 #app-wrapper {

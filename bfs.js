@@ -31,11 +31,8 @@ class BFS {
         vertexOpened( nvx.id );
         this.visit(nvx, current);
       }
-      if (neighborId === this.endId) {
-        console.log("Success!");
-        pathFound( nvx );
-        this.queue.length = 0;
-        return;
+      if (this.isEnd(neighborId)) {
+        return this.finish(vertexClosed, pathFound);
       }
     }
   }
@@ -52,5 +49,17 @@ class BFS {
       neighbor.visited = true;
       neighbor.previous = current;
       this.queue.push( neighbor );
+  }
+
+  isEnd(vertex) {
+    return vertex === this.endId;
+  }
+
+  finish(vertexClosed, pathFound) {
+    console.log("Success!");
+    while (this.queue.length > 0) {
+      vertexClosed( this.queue.pop().id );
+    }
+    pathFound( this.vertexMap.get( this.endId ));
   }
 }

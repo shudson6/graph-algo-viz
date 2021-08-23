@@ -25,8 +25,8 @@ const drawButtons = [ startPointButton
                       ,wallButton
                     ];
 
-const defaultStartPoint = "24,2";
-const defaultEndPoint = "2,20";
+const defaultStartPoint = "0,0";
+const defaultEndPoint = "30,30";
 
 let startPoint;
 let endPoint;

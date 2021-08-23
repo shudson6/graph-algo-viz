@@ -30,8 +30,8 @@ const defaultEndPoint = "2,20";
 
 let startPoint;
 let endPoint;
-
-let impediment;
+let drawingType;
+let pathVisualsPresent = false;
 
 initializeGrid(gridWidth, gridHeight);
 
@@ -135,7 +135,7 @@ function startDrawing(event) {
 function drawTerrain(event) {
   if ( event.buttons === 1 && isValidDrawTarget(event.target)) {
     event.target.className = "square";
-    event.target.classList.add( impediment );
+    event.target.classList.add( drawingType );
   }
 }
 
@@ -159,9 +159,30 @@ function removePathingVisuals() {
       node.classList.remove("square-on-path");
     }
   }
+  pathVisualsPresent = false;
+}
+
+function resetTerrain() {
+  for (const node of grid.childNodes) {
+    if (isValidDrawTarget( node )) {
+      node.className = "square";
+    }
+  }
+}
+
+function resetButtonListener() {
+  if (pathVisualsPresent) {
+    removePathingVisuals();
+  }
+  else {
+    resetTerrain();
+  }
 }
 
 function drawingButtonsListener(event) {
+  if (pathVisualsPresent) {
+    removePathingVisuals();
+  }
   grid.removeEventListener("click", clickedNewStartPoint);
   grid.removeEventListener("click", clickedNewEndPoint);
   grid.removeEventListener("mousedown", startDrawing);
@@ -178,19 +199,19 @@ function drawingButtonsListener(event) {
     grid.addEventListener("click", clickedNewEndPoint);
   }
   if (event.target === wallButton) {
-    impediment = "square-wall";
+    drawingType = "square-wall";
     grid.addEventListener("mousedown", startDrawing);
   }
   if (event.target === dirtButton) {
-    impediment = "square-dirt";
+    drawingType = "square-dirt";
     grid.addEventListener("mousedown", startDrawing);
   }
   if (event.target === waterButton) {
-    impediment = "square-water";
+    drawingType = "square-water";
     grid.addEventListener("mousedown", startDrawing);
   }
   if (event.target === roadButton) {
-    impediment = "square";
+    drawingType = "square";
     grid.addEventListener("mousedown", startDrawing);
   }
 }
@@ -209,10 +230,13 @@ function runButtonListener() {
         tracePath(vertex);
         enableControls();
       });
+  pathVisualsPresent = true;
 }
 
 function selectAlgorithm(event) {
-  removePathingVisuals();
+  if (pathVisualsPresent) {
+    removePathingVisuals();
+  }
   for (button of algoButtons.filter(b => b != event.target)) {
     deselectButton( button );
   }
@@ -322,7 +346,7 @@ function disableControls() {
   }
   runButton.removeEventListener("click", runButtonListener);
   runButton.classList.add("button-disabled");
-  resetButton.removeEventListener("click", removePathingVisuals);
+  resetButton.removeEventListener("click", resetButtonListener);
   resetButton.classList.add("button-disabled");
   grid.removeEventListener("mousedown", startDrawing);
 }
@@ -338,7 +362,7 @@ function enableControls() {
   }
   runButton.addEventListener("click", runButtonListener);
   runButton.classList.remove("button-disabled");
-  resetButton.addEventListener("click", removePathingVisuals);
+  resetButton.addEventListener("click", resetButtonListener);
   resetButton.classList.remove("button-disabled");
 }
 

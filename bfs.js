@@ -18,7 +18,7 @@ class BFS {
       setTimeout(() => {
         this.step(vertexOpened, vertexClosed, pathFound);
         this.run(vertexOpened, vertexClosed, pathFound);
-      }, 20);
+      }, 15);
     }
   }
 

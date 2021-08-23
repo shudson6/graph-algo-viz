@@ -104,3 +104,8 @@
   color: white;
   background-color: gray;
 }
+
+.button-disabled {
+  border-color: slategray;
+  color: slategray;
+}

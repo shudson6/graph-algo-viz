@@ -313,25 +313,33 @@ function disableControls() {
   // stuck manually removing all listeners that might be attached
   for (const button of algoButtons) {
     button.removeEventListener("click", selectAlgorithm);
+    button.classList.add("button-disabled");
   }
   for (const button of drawButtons) {
     deselectButton( button );
     button.removeEventListener("click", drawingButtonsListener);
+    button.classList.add("button-disabled");
   }
   runButton.removeEventListener("click", runButtonListener);
+  runButton.classList.add("button-disabled");
   resetButton.removeEventListener("click", removePathingVisuals);
+  resetButton.classList.add("button-disabled");
   grid.removeEventListener("mousedown", startDrawing);
 }
 
 function enableControls() {
   for (const button of algoButtons) {
     button.addEventListener("click", selectAlgorithm);
+    button.classList.remove("button-disabled");
   }
   for (const button of drawButtons) {
     button.addEventListener("click", drawingButtonsListener);
+    button.classList.remove("button-disabled");
   }
   runButton.addEventListener("click", runButtonListener);
+  runButton.classList.remove("button-disabled");
   resetButton.addEventListener("click", removePathingVisuals);
+  resetButton.classList.remove("button-disabled");
 }
 
 // for debugging
